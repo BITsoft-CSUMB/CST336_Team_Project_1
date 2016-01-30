@@ -37,96 +37,32 @@ function getBooks($sort) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Support John's directory structure -->
+  <!-- <link rel="stylesheet" type="text/css" href="library.css">
   <link rel="shortcut icon" href="../media/assign4-favicon.ico">
   <style>
     body {
       background-image: url("../media/background-bookcase.jpg");
     }
-  </style>
+  </style> -->
 
   <!-- Support Brittany's directory structure -->
-  <!--<link rel="shortcut icon" href="favicon.ico">
+  <link rel="stylesheet" type="text/css" href="library.css">
+  <link rel="shortcut icon" href="favicon.ico">
   <style>
     body {
-      background-image: url("background-bookcase.jpg");
+      background-image: url("background-library.jpg");
     }
-  </style>-->
+  </style>
 
   <!-- Support Ashley's directory structure (Ashley -> Update as needed) -->
-  <!--<link rel="shortcut icon" href="favicon.ico">
+  <!-- <link rel="stylesheet" type="text/css" href="library.css">
+  <link rel="shortcut icon" href="favicon.ico">
   <style>
     body {
-      background-image: url("background-bookcase.jpg");
+      background-image: url("background-library.jpg");
     }
-  </style>-->
-  
-  <style>
-  /* Color Palette:
-     #334139 -> Lighter Green    #1E2D24 -> Dark Green
-     #E6E8E6 -> Off White        #FFE0B5 -> Light Tan
-     #433F6B -> Indigo           */
+  </style> -->
 
-  h1 {
-    color: #1E2D24;
-    text-align: center;
-	text-shadow: -2px 2px #888888;
-  }
-  table {
-    margin: auto;
-    background-color: #E6E8E6;
-  }
-  tr:hover {
-    background-color: #FFE0B5;
-  }
-  th {
-    background-color: #433F6B;
-	color: white;
-	text-shadow: -1px 1px #888888;
-  }
-  td {
-    border-bottom: 1px solid #ddd;
-    padding: 5px;
-  }
-  a {
-	  color: black;
-  }
-  .content {
-    width: 1000px;
-    margin: auto;
-    background-color: rgba(248, 247, 216, 0.75);
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 200%;
-  }
-  .black_overlay {
-    display: none;
-    position: absolute;
-    top: 0%;
-    left: 0%;
-    width: 100%;
-    height: 100%;
-    background-color: black;
-    z-index:1001;
-    -moz-opacity: 0.8;
-    opacity:.80;
-    filter: alpha(opacity=80);
-  }
-  .white_content {
-    display: none;
-    position: absolute;
-    top: 25%;
-    left: 25%;
-    width: 50%;
-    height: 50%;
-    padding: 5px;
-    border: 5px solid #433F6B;
-    background-color: #E6E8E6;
-    z-index:1002;
-    overflow: auto;
-  }
-  </style>
 </head>
 
 <body>
