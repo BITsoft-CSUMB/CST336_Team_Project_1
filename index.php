@@ -103,16 +103,18 @@ function getBooks($sort) {
         // Populate table with book entries.
         $bookList = getBooks();
         foreach ($bookList as $book) {
-          echo '<tr onclick="document.getElementById("light"").style.display="block";document.getElementById("fade").style.display="block">';
-          echo '  <td class="book_id">' . $book['id'] . '</td>';
-          echo '  <td class="book_title">' . $book['title'] . '</td>';
-          echo '  <td>' . $book['author'] . '</td>';
-          // TODO: Add an onClick pop-up that shows full synopsis & details.
-          echo '  <td>' . substr($book['synopsis'], 0, 125) . '...</td>';
-          echo '  <td>' . $book['price'] . '</td>';
-          echo '  <td><a href=".?edit="' . $book['id'] . '">Edit</a></td>';
-          echo '</tr>';
-        }
+      ?>
+        <tr onclick="document.getElementById('light').style.display='block';document.getElementById('fade').style.display='block'">
+          <td class="book_id"><?= $book['id'] ?></td>
+          <td class="book_title"><?= $book['title'] ?></td>
+          <td><?= $book['author'] ?></td>
+          <!-- TODO: Add an onClick pop-up that shows full synopsis & details. -->
+          <td><?= substr($book['synopsis'], 0, 125)?>...</td>
+          <td><?= $book['price'] ?></td>
+          <td><a href=".?edit="<?= $book['id']?>"">Edit</a></td>
+        </tr>
+      <?php
+        } // close foreach
       ?>
     </table>
 
