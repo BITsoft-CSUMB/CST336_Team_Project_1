@@ -1,33 +1,32 @@
 <?php
-// updated by JL 30-Jan @ 0137
+// **BM UPDATING NOW**
+// updated by BM 30-Jan @ 1016
 require '../db_connection.php'; // Open database connection.
 
 function getBooks($sort) {
-    global $dbConn;
-    $sql = "SELECT books.id, 
-              books.title, 
-              books.synopsis, 
-              books.price, 
-              authors.name AS author 
-            FROM books 
-            LEFT JOIN authors 
-            ON books.author_id = authors.id ";
-	if (isset($_GET['sort']) && ($_GET['sort'] == 1)) {
-		$sql .= "ORDER BY books.title;";
-	}
-	elseif (isset($_GET['sort']) && ($_GET['sort'] == 2)) {
-		$sql .= "ORDER BY authors.name;";
-	}
-	elseif (isset($_GET['sort']) && ($_GET['sort'] == 3)) {
-			$sql .= "ORDER BY books.price;";
-	}
-	else {
-		$sql .= " ORDER BY books.id;";
-	}
-    $stmt = $dbConn -> prepare($sql);
-    $stmt -> execute();
-    return $stmt->fetchAll();
+  global $dbConn;
+  $sql = "SELECT books.id, 
+            books.title, 
+            books.synopsis, 
+            books.price, 
+            authors.name AS author 
+          FROM books 
+          LEFT JOIN authors 
+          ON books.author_id = authors.id ";
+  if (isset($_GET['sort']) && ($_GET['sort'] == 1)) {
+    $sql .= "ORDER BY books.title;";
+  } elseif (isset($_GET['sort']) && ($_GET['sort'] == 2)) {
+    $sql .= "ORDER BY authors.name;";
+  } elseif (isset($_GET['sort']) && ($_GET['sort'] == 3)) {
+    $sql .= "ORDER BY books.price;";
+  } else {
+    $sql .= " ORDER BY books.id;";
+  }
+  $stmt = $dbConn -> prepare($sql);
+  $stmt -> execute();
+  return $stmt->fetchAll();
 }
+
 ?>
 <html lang="en">
 <head>
@@ -36,18 +35,37 @@ function getBooks($sort) {
   <title>Book Collection</title>
   <meta name="author" content="Team 6 - Bitsoft">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- -->
+
+  <!-- Support John's directory structure -->
   <link rel="shortcut icon" href="../media/assign4-favicon.ico">
-  <!--<link rel="shortcut icon" href="favicon.ico">-->
+  <style>
+    body {
+      background-image: url("../media/background-bookcase.jpg");
+    }
+  </style>
+
+  <!-- Support Brittany's directory structure -->
+  <!--<link rel="shortcut icon" href="favicon.ico">
+  <style>
+    body {
+      background-image: url("background-bookcase.jpg");
+    }
+  </style>-->
+
+  <!-- Support Ashley's directory structure (Ashley -> Update as needed) -->
+  <!--<link rel="shortcut icon" href="favicon.ico">
+  <style>
+    body {
+      background-image: url("background-bookcase.jpg");
+    }
+  </style>-->
+  
   <style>
   /* Color Palette:
      #334139 -> Lighter Green    #1E2D24 -> Dark Green
      #E6E8E6 -> Off White        #FFE0B5 -> Light Tan
      #433F6B -> Indigo           */
-  body {
-    background-image: url("../media/background-bookcase.jpg");
-    <!--background-image: url("background-bookcase.jpg");-->
-  }
+
   h1 {
     color: #1E2D24;
     text-align: center;
