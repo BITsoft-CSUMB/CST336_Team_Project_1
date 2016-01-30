@@ -9,13 +9,12 @@ h1 {
   text-shadow: -2px 2px #888888;
 }
 
-h4 {
-  margin: 10px;
-}
-
 table {
   margin: auto;
   background-color: #E6E8E6;
+  border-collapse: collapse;
+  border: 1px solid #cbd0cb;
+  box-shadow: 0 0 5px #cbd0cb;
 }
 
 tr:hover {
@@ -25,14 +24,15 @@ tr:hover {
 th {
   background-color: #433F6B;
   color: white;
-  text-shadow: -1px 1px #888888;
   vertical-align: middle;
   text-align: center;
+  padding: 10px;
 }
 
 td {
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #cbd0cb;
   padding: 5px;
+  margin: 10px;
 }
 
 a {
@@ -51,21 +51,58 @@ table.add_book tr td {
   vertical-align: top;
 }
 
-table.book_collection tr th.header_title, .book_collection tr th.author_title {
-  width: 200px;
+table.book_collection tr th h4 {
+  display: inline-block;
+  margin: 0;
+  text-shadow: -1px 1px #888888;
 }
 
-table.book_collection tr th.header_price{
+table.book_collection tr th.header_id {
   width: 50px;
+}
+
+table.book_collection tr th.header_title, .book_collection tr th.header_author {
+  width: 175px;
+}
+
+table.book_collection tr th.header_price {
+  width: 75px;
+}
+
+table.book_collection tr td {
+  text-align: center;
+}
+
+table.book_collection tr td.book_synopsis {
+  text-align: left;
 }
 
 table.book_collection tr td.book_title {
   font-style: italic;
+  text-align: left;
+}
+
+table.book_collection tr td.book_title a:hover {
+  color: #57528b;
 }
 
 table.book_collection tr td.book_id {
   font-style: italic;
   text-align: center;
+}
+
+table.book_collection tr th a.down_arrow {
+  color: white;
+  text-decoration: none;
+  padding: 0 0 0 5px;
+  font-size: 10px;
+  line-height: 18px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+table.book_collection tr th:hover a.down_arrow {
+  color: #FFE0B5;
 }
 
 .content {
@@ -93,16 +130,51 @@ table.book_collection tr td.book_id {
   filter: alpha(opacity=80);
 }
 
-.white_content {
+table.book_details {
+  box-shadow: none;
+}
+
+#popup {
   display: none;
   position: absolute;
   top: 25%;
   left: 25%;
   width: 50%;
   height: 50%;
-  padding: 5px;
-  border: 5px solid #433F6B;
+  border: 5px solid #1E2D24;
+  border-radius: 5px;
   background-color: #E6E8E6;
   z-index:1002;
   overflow: auto;
+}
+
+.popup_header {
+  background-color: #1E2D24;
+  color: white;
+  text-shadow: -1px 1px #888888;
+  text-align: right;
+}
+
+.popup_nav {
+  display: inline-block;
+}
+
+.popup_description {
+  text-align: center;
+}
+
+.popup_description h2 {
+  padding-bottom: 0.75em;
+  margin: -10px 0 0 0;
+}
+
+.popup_nav a {
+  color: white;
+  text-decoration: none;
+  padding: 0 10px;
+  line-height: 30px;
+}
+
+.popup_nav:hover a {
+  color: #FFE0B5;
 }

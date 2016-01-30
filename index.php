@@ -1,9 +1,12 @@
 <!--
   Last Updated: BM 30-Jan @ 1309
 -->
-
 <?php
-require '../db_connection.php'; // Open database connection.
+/*
+  Open database connection and import the new database 
+  connection as $dbConn.
+*/
+require '../db_connection.php';
 
 /*
   Get list of all books for the database. Books are sorted by
@@ -56,10 +59,8 @@ function getBooks() {
   <style>
     body {
       background-image: url("../media/background-bookcase.jpg");
-    }
-  <?php 
-    $down_arrow_img = '<img class="down_arrow" src="../media/down.png">';
-  ?> -->
+    } 
+  </style> -->
 
   <!-- Support Brittany's directory structure -->
   <link rel="stylesheet" type="text/css" href="library.css">
@@ -69,9 +70,6 @@ function getBooks() {
       background-image: url("background-library.jpg");
     }
   </style>
-  <?php 
-    $down_arrow_img = '<img class="down_arrow" src="down.png">';
-  ?>
 
   <!-- Support Ashley's directory structure (Ashley -> Update as needed) -->
   <!-- <link rel="stylesheet" type="text/css" href="library.css">
@@ -80,10 +78,7 @@ function getBooks() {
     body {
       background-image: url("background-library.jpg");
     }
-  </style>
-  <?php 
-    $down_arrow_img = '<img class="down_arrow" src="down.png">';
-  ?> -->
+  </style> -->
 
 </head>
 
@@ -92,36 +87,38 @@ function getBooks() {
     <h1>BITsoft Book Collection</h1>
     <table class="book_collection">
       <tr>
-        <th onClick="javascript:location.href='?sort=id'">
-          <h4>ID<?= $down_arrow_img ?></h4>
+        <th class="header_id" onClick="reloadAndSort('id')">
+          <h4>ID</h4><a class="down_arrow" href="#">&#9660;</a>
         </th>
-        <th class="header_title" onClick="javascript:location.href='?sort=title'">
-          <h4>Title<?= $down_arrow_img ?></h4>
+        <th class="header_title" onClick="reloadAndSort('title')">
+          <h4>Title</h4><a class="down_arrow" href="#">&#9660;</a>
         </th>
-        <th class="header_author" onClick="javascript:location.href='?sort=author'">
-          <h4>Author<?= $down_arrow_img ?></h4>
+        <th class="header_author" onClick="reloadAndSort('author')">
+          <h4>Author</h4><a class="down_arrow" href="#">&#9660;</a>
         </th>
         <th>
           <h4>Synopsis</h4>
         </th>
-        <th class="header_price" onClick="javascript:location.href='?sort=price'">
-          <h4>Price<?= $down_arrow_img ?></h4>
+        <th class="header_price" onClick="reloadAndSort('price')">
+          <h4>Price</h4><a class="down_arrow" href="#">&#9660;</a>
         </th>
         <th></th>
       </tr>
 
       <?php
-        // Populate table with book entries, initially sorting by ID.
+        // Populate table with books that exist in the database.
         $bookList = getBooks();
         foreach ($bookList as $book) {
       ?>
-        <tr onclick="document.getElementById('light').style.display='block';document.getElementById('fade').style.display='block'">
+        <tr>
           <td class="book_id"><?= $book['id'] ?></td>
-          <td class="book_title"><?= $book['title'] ?></td>
-          <td><?= $book['author'] ?></td>
+          <td class="book_title">
+            <a href="#" onclick="showPopup()"><?= $book['title'] ?></a>
+          </td>
+          <td class="book_author"><?= $book['author'] ?></td>
           <!-- TODO: Add an onClick pop-up that shows full synopsis & details. -->
-          <td><?= substr($book['synopsis'], 0, 125)?>...</td>
-          <td><?= $book['price'] ?></td>
+          <td class="book_synopsis"><?= substr($book['synopsis'], 0, 125)?>...</td>
+          <td class="book_price">$<?= $book['price'] ?></td>
           <td><a href=".?edit="<?= $book['id']?>"">Edit</a></td>
         </tr>
       <?php
@@ -164,9 +161,16 @@ function getBooks() {
     </table>
   </div>
 
-  <div id="light" class="white_content">
-    <table border=0>
-      <th colspan=2 align=right onclick = "document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'">Close</th>
+  <div id="popup">
+    <div class="popup_header">
+      <div class="popup_nav">
+        <a href="#" onclick="hidePopup()">X</a>
+      </div>
+      <div class="popup_description">
+        <h2>Book Details</h2>
+      </div>
+    </div>
+    <table class="book_details">
       <tr>
         <td>Title</td>
         <td rowspan=5>picOfCover</td>
@@ -190,6 +194,21 @@ function getBooks() {
   </div>
 
   <div id="fade" class="black_overlay"></div>
-  
+
+  <script>
+    function reloadAndSort(sortOpt) {
+      javascript:location.href='?sort=' + sortOpt;
+    };
+    
+    function showPopup() {
+      document.getElementById('popup').style.display='block';
+      document.getElementById('fade').style.display='block';
+    };
+    
+    function hidePopup() {
+      document.getElementById('popup').style.display='none';
+      document.getElementById('fade').style.display='none';
+    };
+  </script>
 </body>
 </html>
