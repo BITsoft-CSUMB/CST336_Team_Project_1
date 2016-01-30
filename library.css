@@ -33,6 +33,26 @@ a {
   color: black;
 }
 
+table.book_collection {
+  width: 1000px;
+}
+
+table.add_book {
+  margin: 25px auto;
+}
+
+table.add_book tr td {
+  vertical-align: top;
+}
+
+table.book_collection tr th.header_title, .book_collection tr th.author_title {
+  width: 200px;
+}
+
+table.book_collection tr th.header_price{
+  width: 50px;
+}
+
 .content {
   width: 1000px;
   margin: auto;
