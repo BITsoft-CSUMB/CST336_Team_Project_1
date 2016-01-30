@@ -1,14 +1,15 @@
 <!--
-  **BM UPDATING NOW**
-  Last Updated: BM 30-Jan @ 1218
+  Last Updated: BM 30-Jan @ 1309
 -->
 
 <?php
 require '../db_connection.php'; // Open database connection.
 
 /*
-    Get books. 
-
+  Get list of all books for the database. Books are sorted by
+  ID by default and can optionally be sorted by title, author,
+  or price by defining the query parameter "sort" as "title",
+  "author", or "price".
 */
 function getBooks() {
   global $dbConn;
