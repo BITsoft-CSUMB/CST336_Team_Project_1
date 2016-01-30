@@ -9,6 +9,10 @@ h1 {
   text-shadow: -2px 2px #888888;
 }
 
+h4 {
+  margin: 10px;
+}
+
 table {
   margin: auto;
   background-color: #E6E8E6;
@@ -22,6 +26,8 @@ th {
   background-color: #433F6B;
   color: white;
   text-shadow: -1px 1px #888888;
+  vertical-align: middle;
+  text-align: center;
 }
 
 td {
@@ -51,6 +57,15 @@ table.book_collection tr th.header_title, .book_collection tr th.author_title {
 
 table.book_collection tr th.header_price{
   width: 50px;
+}
+
+table.book_collection tr td.book_title {
+  font-style: italic;
+}
+
+table.book_collection tr td.book_id {
+  font-style: italic;
+  text-align: center;
 }
 
 .content {

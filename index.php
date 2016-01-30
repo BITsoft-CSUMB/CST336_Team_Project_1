@@ -1,6 +1,9 @@
+<!--
+  **BM UPDATING NOW**
+  Last Updated: BM 30-Jan @ 1218
+-->
+
 <?php
-// **BM UPDATING NOW**
-// updated by BM 30-Jan @ 1016
 require '../db_connection.php'; // Open database connection.
 
 function getBooks($sort) {
@@ -79,19 +82,19 @@ function getBooks($sort) {
     <table class="book_collection">
       <tr>
         <th onClick="javascript:location.href='?sort=0'">
-          ID<?= $down_arrow_img ?>
+          <h4>ID<?= $down_arrow_img ?></h4>
         </th>
         <th class="header_title" onClick="javascript:location.href='?sort=1'">
-          Title<?= $down_arrow_img ?>
+          <h4>Title<?= $down_arrow_img ?></h4>
         </th>
         <th class="header_author" onClick="javascript:location.href='?sort=2'">
-          Author<?= $down_arrow_img ?>
+          <h4>Author<?= $down_arrow_img ?></h4>
         </th>
         <th>
-          Synopsis
+          <h4>Synopsis</h4>
         </th>
         <th class="header_price" onClick="javascript:location.href='?sort=3'">
-          Price<?= $down_arrow_img ?>
+          <h4>Price<?= $down_arrow_img ?></h4>
         </th>
         <th></th>
       </tr>
@@ -100,15 +103,15 @@ function getBooks($sort) {
         // Populate table with book entries.
         $bookList = getBooks();
         foreach ($bookList as $book) {
-          echo "\t\t\t<tr onclick=\"document.getElementById('light').style.display='block';document.getElementById('fade').style.display='block'\">\n";
-          echo "\t\t\t\t<td><i>" . $book['id'] . "</i></td>\n";
-          echo "\t\t\t\t<td><i>" . $book['title'] . "</i></td>\n";
-          echo "\t\t\t\t<td>" . $book['author'] . "</td>\n";
+          echo '<tr onclick="document.getElementById("light"").style.display="block";document.getElementById("fade").style.display="block">';
+          echo '  <td class="book_id">' . $book['id'] . '</td>';
+          echo '  <td class="book_title">' . $book['title'] . '</td>';
+          echo '  <td>' . $book['author'] . '</td>';
           // TODO: Add an onClick pop-up that shows full synopsis & details.
-          echo "\t\t\t\t<td>" . substr($book['synopsis'], 0, 125) . "...</td>\n";
-          echo "\t\t\t\t<td>" . $book['price'] . "</td>\n";
-              echo "\t\t\t\t<td><a href=\".?edit=" . $book['id'] . "\">Edit</a></td>\n";
-          echo "\t\t\t</tr>\n";
+          echo '  <td>' . substr($book['synopsis'], 0, 125) . '...</td>';
+          echo '  <td>' . $book['price'] . '</td>';
+          echo '  <td><a href=".?edit="' . $book['id'] . '">Edit</a></td>';
+          echo '</tr>';
         }
       ?>
     </table>
