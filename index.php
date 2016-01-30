@@ -6,7 +6,11 @@
 <?php
 require '../db_connection.php'; // Open database connection.
 
-function getBooks($sort) {
+/*
+    Get books. 
+
+*/
+function getBooks() {
   global $dbConn;
   $sql = "SELECT books.id, 
             books.title, 
@@ -16,14 +20,20 @@ function getBooks($sort) {
           FROM books 
           LEFT JOIN authors 
           ON books.author_id = authors.id ";
-  if (isset($_GET['sort']) && ($_GET['sort'] == 1)) {
-    $sql .= "ORDER BY books.title;";
-  } elseif (isset($_GET['sort']) && ($_GET['sort'] == 2)) {
-    $sql .= "ORDER BY authors.name;";
-  } elseif (isset($_GET['sort']) && ($_GET['sort'] == 3)) {
-    $sql .= "ORDER BY books.price;";
-  } else {
-    $sql .= " ORDER BY books.id;";
+  $sort = isset($_GET['sort']) ? $_GET['sort'] : null;
+  switch ($sort) {
+    case "title":
+      $sql .= "ORDER BY books.title;";
+      break;
+    case "author":
+      $sql .= "ORDER BY authors.name;";
+      break;
+    case "price":
+      $sql .= "ORDER BY books.price;";
+      break;
+    default:
+      $sql .= "ORDER BY books.id;";
+      break;
   }
   $stmt = $dbConn -> prepare($sql);
   $stmt -> execute();
@@ -81,26 +91,26 @@ function getBooks($sort) {
     <h1>BITsoft Book Collection</h1>
     <table class="book_collection">
       <tr>
-        <th onClick="javascript:location.href='?sort=0'">
+        <th onClick="javascript:location.href='?sort=id'">
           <h4>ID<?= $down_arrow_img ?></h4>
         </th>
-        <th class="header_title" onClick="javascript:location.href='?sort=1'">
+        <th class="header_title" onClick="javascript:location.href='?sort=title'">
           <h4>Title<?= $down_arrow_img ?></h4>
         </th>
-        <th class="header_author" onClick="javascript:location.href='?sort=2'">
+        <th class="header_author" onClick="javascript:location.href='?sort=author'">
           <h4>Author<?= $down_arrow_img ?></h4>
         </th>
         <th>
           <h4>Synopsis</h4>
         </th>
-        <th class="header_price" onClick="javascript:location.href='?sort=3'">
+        <th class="header_price" onClick="javascript:location.href='?sort=price'">
           <h4>Price<?= $down_arrow_img ?></h4>
         </th>
         <th></th>
       </tr>
 
       <?php
-        // Populate table with book entries.
+        // Populate table with book entries, initially sorting by ID.
         $bookList = getBooks();
         foreach ($bookList as $book) {
       ?>
