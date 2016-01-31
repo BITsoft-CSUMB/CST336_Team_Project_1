@@ -3,6 +3,10 @@
    #E6E8E6 -> Off White        #FFE0B5 -> Light Tan
    #433F6B -> Indigo           */
 
+h1, h2, h3, h4, h5, th, td, p {
+  font-family: "Book Antiqua",Palatino,"Palatino Linotype","Palatino LT STD",Georgia,serif;
+}
+
 h1 {
   color: #1E2D24;
   text-align: center;
@@ -31,7 +35,7 @@ th {
 
 td {
   border-bottom: 1px solid #cbd0cb;
-  padding: 5px;
+  padding: 10px;
   margin: 10px;
 }
 
@@ -57,15 +61,11 @@ table.book_collection tr th h4 {
   text-shadow: -1px 1px #888888;
 }
 
-table.book_collection tr th.header_id {
-  width: 50px;
-}
-
 table.book_collection tr th.header_title, .book_collection tr th.header_author {
-  width: 175px;
+  width: 200px;
 }
 
-table.book_collection tr th.header_price {
+table.book_collection tr th.header_id, table.book_collection tr th.header_price {
   width: 75px;
 }
 
@@ -75,6 +75,7 @@ table.book_collection tr td {
 
 table.book_collection tr td.book_synopsis {
   text-align: left;
+  max-width: 500px;
 }
 
 table.book_collection tr td.book_title {
@@ -130,8 +131,20 @@ table.book_collection tr th:hover a.down_arrow {
   filter: alpha(opacity=80);
 }
 
+.ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 table.book_details {
   box-shadow: none;
+  margin: 0;
+  width: 100%;
+}
+
+table.book_details > tbody > tr > td:first-child {
+  vertical-align: top;
 }
 
 #popup {

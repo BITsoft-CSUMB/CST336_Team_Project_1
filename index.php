@@ -1,5 +1,5 @@
 <!--
-  Last Updated: BM 30-Jan @ 1309
+  Last Updated: BM 30-Jan @ 1807
 -->
 <?php
 /*
@@ -16,27 +16,33 @@ require '../db_connection.php';
 */
 function getBooks() {
   global $dbConn;
+  $sort = isset($_GET['sort']) ? $_GET['sort'] : null;
   $sql = "SELECT books.id, 
             books.title, 
             books.synopsis, 
-            books.price, 
-            authors.name AS author 
+            books.price,  
+            books.isbn,   
+            books.release_date, 
+            authors.name AS author, 
+            publishers.name AS publisher
           FROM books 
           LEFT JOIN authors 
-          ON books.author_id = authors.id ";
-  $sort = isset($_GET['sort']) ? $_GET['sort'] : null;
+          ON books.author_id = authors.id 
+          LEFT JOIN publishers 
+          ON books.publisher_id = publishers.id 
+          ORDER BY ";
   switch ($sort) {
     case "title":
-      $sql .= "ORDER BY books.title;";
+      $sql .= "books.title;";
       break;
     case "author":
-      $sql .= "ORDER BY authors.name;";
+      $sql .= "authors.name;";
       break;
     case "price":
-      $sql .= "ORDER BY books.price;";
+      $sql .= "books.price;";
       break;
     default:
-      $sql .= "ORDER BY books.id;";
+      $sql .= "books.id;";
       break;
   }
   $stmt = $dbConn -> prepare($sql);
@@ -113,11 +119,11 @@ function getBooks() {
         <tr>
           <td class="book_id"><?= $book['id'] ?></td>
           <td class="book_title">
-            <a href="#" onclick="showPopup()"><?= $book['title'] ?></a>
+            <a href="#" onclick='showBook(<?= json_encode(array_map('utf8_encode', $book)) ?>)'><?= $book['title'] ?></a>
           </td>
           <td class="book_author"><?= $book['author'] ?></td>
           <!-- TODO: Add an onClick pop-up that shows full synopsis & details. -->
-          <td class="book_synopsis"><?= substr($book['synopsis'], 0, 125)?>...</td>
+          <td class="book_synopsis ellipsis"><?= utf8_decode($book['synopsis']) ?></td>
           <td class="book_price">$<?= $book['price'] ?></td>
           <td><a href=".?edit="<?= $book['id']?>"">Edit</a></td>
         </tr>
@@ -172,23 +178,29 @@ function getBooks() {
     </div>
     <table class="book_details">
       <tr>
-        <td>Title</td>
+        <td>Title:</td>
+        <td id="popup_title"></td>
         <td rowspan=5>picOfCover</td>
       </tr>
       <tr>
-        <td>ISBN: isbn</td>
+        <td>ISBN:</td>
+        <td id="popup_isbn"></td>
       </tr>
       <tr>
-        <td>by: author</td>
+        <td>Author:</td>
+        <td id="popup_author"></td>
       </tr>
       <tr>
-        <td>Date: release_date</td>
+        <td>Date:</td>
+        <td id="popup_release_date"></td>
       </tr>
       <tr>
-        <td>Pub: publisher</td>
+        <td>Pub:</td>
+        <td id="popup_publisher"></td>
       </tr>
       <tr>
-        <td colspan=2>Synopsis: synopsis goes here asdf asdf asdf asdf asdf asdf asdf asdf asdf asdf asdf asdf asdf asdf asdf asdf asdf asdf asdf asdf asdf asdf asdf asdf asdf asdf asdf </td>
+        <td>Synopsis:</td>
+        <td colspan=2 id="popup_synopsis"></td>
       </tr>
     </table>
   </div>
@@ -199,6 +211,19 @@ function getBooks() {
     function reloadAndSort(sortOpt) {
       javascript:location.href='?sort=' + sortOpt;
     };
+    
+    function showBook(book) {
+      var releaseDate = new Date(Date.parse(book.release_date.replace('-','/','g')));
+      var strReleaseDate = (releaseDate.getMonth() + 1) + '/' + releaseDate.getDate() 
+        + '/' + releaseDate.getFullYear();
+      document.getElementById('popup_title').innerHTML = book.title;
+      document.getElementById('popup_isbn').innerHTML = book.isbn;
+      document.getElementById('popup_author').innerHTML = book.author;
+      document.getElementById('popup_release_date').innerHTML = strReleaseDate;
+      document.getElementById('popup_publisher').innerHTML = book.publisher;
+      document.getElementById('popup_synopsis').innerHTML = book.synopsis;
+      showPopup();
+    }
     
     function showPopup() {
       document.getElementById('popup').style.display='block';
