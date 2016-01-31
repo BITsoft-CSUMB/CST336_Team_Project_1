@@ -1,6 +1,7 @@
 <!--
-  Last Updated: BM 30-Jan @ 1807
+  Last Updated: BM 30-Jan @ 1854
 -->
+
 <?php
 /*
   Open database connection and import the new database 
@@ -119,11 +120,11 @@ function getBooks() {
         <tr>
           <td class="book_id"><?= $book['id'] ?></td>
           <td class="book_title">
-            <a href="#" onclick='showBook(<?= json_encode(array_map('utf8_encode', $book)) ?>)'><?= $book['title'] ?></a>
+            <a href="#" onclick='showBook(<?= json_encode($book, JSON_HEX_APOS) ?>)'><?= $book['title'] ?></a>
           </td>
           <td class="book_author"><?= $book['author'] ?></td>
           <!-- TODO: Add an onClick pop-up that shows full synopsis & details. -->
-          <td class="book_synopsis ellipsis"><?= utf8_decode($book['synopsis']) ?></td>
+          <td class="book_synopsis ellipsis"><?= $book['synopsis'] ?></td>
           <td class="book_price">$<?= $book['price'] ?></td>
           <td><a href=".?edit="<?= $book['id']?>"">Edit</a></td>
         </tr>
