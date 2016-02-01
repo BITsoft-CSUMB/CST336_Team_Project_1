@@ -9,6 +9,15 @@
 */
 require '../db_connection.php';
 
+session_start();
+
+/*
+  Redirect user to log in page if they aren't already logged in.
+*/
+if (!isset($_SESSION['username'])) {
+  header("Location: login.php");
+}
+
 /*
   Get list of all books for the database. Books are sorted by
   ID by default and can optionally be sorted by title, author,
@@ -52,6 +61,7 @@ function getBooks() {
 }
 
 ?>
+
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -60,8 +70,8 @@ function getBooks() {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Book Collection</title>
 
-  <!-- Support John's directory structure -->
-  <!-- <link rel="stylesheet" type="text/css" href="library.css">
+  <!-- Support John's goofy directory structure -->
+  <!-- <link rel="stylesheet" type="text/css" href="assign4-library.css">
   <link rel="shortcut icon" href="../media/assign4-favicon.ico">
   <style>
     body {
@@ -86,10 +96,13 @@ function getBooks() {
       background-image: url("background-library.jpg");
     }
   </style> -->
-
 </head>
 
 <body>
+  <div class="nav_bar">
+    <a href="accountSettings.php">Account Settings</a>
+    <a href="logout.php">Logout</a>
+  </div>
   <div class="content">
     <h1>BITsoft Book Collection</h1>
     <table class="book_collection">

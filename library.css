@@ -3,6 +3,10 @@
    #E6E8E6 -> Off White        #FFE0B5 -> Light Tan
    #433F6B -> Indigo           */
 
+body {
+  margin: 0;
+}
+
 h1, h2, h3, h4, h5, th, td, p {
   font-family: "Book Antiqua",Palatino,"Palatino Linotype","Palatino LT STD",Georgia,serif;
 }
@@ -11,6 +15,8 @@ h1 {
   color: #1E2D24;
   text-align: center;
   text-shadow: -2px 2px #888888;
+  margin: 0;
+  padding: 0.67em;
 }
 
 table {
@@ -102,17 +108,32 @@ table.book_collection tr th a.down_arrow {
   vertical-align: middle;
 }
 
-table.book_collection tr th:hover a.down_arrow {
+table.book_collection tr th:hover a.down_arrow, 
+table.book_collection tr th.header_id:hover h4,
+table.book_collection tr th.header_title:hover h4,
+table.book_collection tr th.header_author:hover h4,
+table.book_collection tr th.header_price:hover h4 {
+  color: #FFE0B5;
+}
+
+.nav_bar {
+  background-color: #1E2D24;
+  text-align: right;
+  padding: 10px;
+}
+
+.nav_bar a {
+  color: #E6E8E6;
+  padding: 0 10px;
+}
+
+.nav_bar a:hover {
   color: #FFE0B5;
 }
 
 .content {
-  width: 1000px;
   margin: auto;
   background-color: rgba(248, 247, 216, 0.75);
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 200%;
 }
