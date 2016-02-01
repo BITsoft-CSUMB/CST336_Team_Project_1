@@ -25,6 +25,7 @@ if (isset($_POST['username'])){
                            ":login_date" => date('Y-m-d H:i:s')));
 
     // Store user information in the session.
+    $_SESSION['user_id'] = $record['id'];
     $_SESSION['username'] = $record['username'];
     $_SESSION['name'] = $record['firstname'] . " " . $record['lastname'];
     header("Location: index.php");

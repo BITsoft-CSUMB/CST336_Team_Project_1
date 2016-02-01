@@ -1,5 +1,5 @@
 <!--
-  Last Updated: BM 30-Jan @ 1854
+  Last Updated: BM 31-Jan @ 1812
 -->
 
 <?php
@@ -14,7 +14,7 @@ session_start();
 /*
   Redirect user to log in page if they aren't already logged in.
 */
-if (!isset($_SESSION['username'])) {
+if (!isset($_SESSION['user_id'])) {
   header("Location: login.php");
 }
 
@@ -71,22 +71,22 @@ function getBooks() {
   <title>Book Collection</title>
 
   <!-- Support John's goofy directory structure -->
-  <!-- <link rel="stylesheet" type="text/css" href="assign4-library.css">
+  <link rel="stylesheet" type="text/css" href="assign4-library.css">
   <link rel="shortcut icon" href="../media/assign4-favicon.ico">
   <style>
     body {
       background-image: url("../media/background-bookcase.jpg");
     } 
-  </style> -->
+  </style>
 
   <!-- Support Brittany's directory structure -->
-  <link rel="stylesheet" type="text/css" href="library.css">
+  <!-- <link rel="stylesheet" type="text/css" href="library.css">
   <link rel="shortcut icon" href="favicon.ico">
   <style>
     body {
       background-image: url("background-library.jpg");
     }
-  </style>
+  </style> -->
 
   <!-- Support Ashley's directory structure (Ashley -> Update as needed) -->
   <!-- <link rel="stylesheet" type="text/css" href="library.css">
@@ -136,7 +136,6 @@ function getBooks() {
             <a href="#" onclick='showBook(<?= json_encode($book, JSON_HEX_APOS) ?>)'><?= $book['title'] ?></a>
           </td>
           <td class="book_author"><?= $book['author'] ?></td>
-          <!-- TODO: Add an onClick pop-up that shows full synopsis & details. -->
           <td class="book_synopsis ellipsis"><?= $book['synopsis'] ?></td>
           <td class="book_price">$<?= $book['price'] ?></td>
           <td><a href=".?edit="<?= $book['id']?>"">Edit</a></td>
