@@ -1,9 +1,11 @@
+<!--  ** BM updating password update functionality now! **  -->
+
 <?php
 require '../db_connection.php';
 
 session_start();
 $error = null;
-$new_username = null;
+$new_password = false;
 
 // Redirect user to log in page if they aren't already logged in.
 if (!isset($_SESSION['user_id'])) {
@@ -11,25 +13,21 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Update username if requested.
-if (isset($_POST['updateUsername']) && isset($_POST['newUsername'])){
+if (isset($_POST['updatePassword']) && isset($_POST['newPassword']) 
+    && strlen($_POST['newPassword']) > 0){
   $sql = "UPDATE library_admin
-          SET username = :username
+          SET password = :password
           WHERE id = :id";
   $stmt = $dbConn -> prepare($sql);
-  $stmt -> execute(array(":username" => $_POST['newUsername'], 
+  $stmt -> execute(array(":password" => hash('sha1', $_POST['newPassword']),
                          ":id" => $_SESSION['user_id']));
-
-  $sql = "SELECT username 
-          FROM library_admin
-          WHERE id = :id";
-  $stmt = $dbConn -> prepare($sql);
-  $stmt -> execute(array(":id" => $_SESSION['user_id']));
-  $new_username = $stmt -> fetch();
+  $new_password = true;
 }
 
 // Get login history for user.
 $sql = "SELECT * FROM library_admin_login_attempts
-        WHERE library_admin_id = :user_id";
+        WHERE library_admin_id = :user_id
+        ORDER BY login_date DESC";
 $stmt = $dbConn -> prepare($sql);
 $stmt -> execute(array(":user_id" => $_SESSION['user_id']));
 $login_attempts = $stmt -> fetchAll();
@@ -129,15 +127,15 @@ $login_attempts = $stmt -> fetchAll();
     <a href="logout.php">Logout</a>
   </div>
   <div class="content">
-    <h1>Update Username</h1>
+    <h1>Update Password</h1>
     <form method="post">
-      <input type="text" name="newUsername">
-      <input type="submit" name="updateUsername">
+      <input type="password" name="newPassword">
+      <input type="submit" name="updatePassword">
     </form>
     <?php
-      if (!empty($new_username)) {
+      if ($new_password) {
     ?>
-      <p>Username updated to <?= $new_username['username'] ?>!</p>
+      <p>Password has been updated!</p>
     <?php
       }
     ?>
