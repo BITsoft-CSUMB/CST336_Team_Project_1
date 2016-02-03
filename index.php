@@ -60,6 +60,35 @@ function getBooks() {
   return $stmt->fetchAll();
 }
 
+/*
+  Get the average cost of all of the books in the database.
+*/
+function getAvgBookCost() {
+  global $dbConn;
+  $sql = "SELECT AVG(price) 
+          FROM books;";
+  $stmt = $dbConn -> prepare($sql);
+  $stmt -> execute();
+  return $stmt -> fetchColumn();
+}
+
+/*
+  Get the most recently released book. More than one book
+  may be returned if there were multiple that were released 
+  the same day that's the latest.
+*/
+function getLatestReleases() {
+  global $dbConn;
+  $sql = "SELECT * 
+          FROM books 
+          WHERE release_date = (
+          SELECT MAX(release_date) 
+          FROM books);";
+  $stmt = $dbConn -> prepare($sql);
+  $stmt -> execute();
+  return $stmt -> fetchAll();
+}
+
 ?>
 
 <html lang="en">
@@ -105,6 +134,24 @@ function getBooks() {
   </div>
   <div class="content">
     <h1>BITsoft Book Collection</h1>
+    <div class="fun_facts">
+      <h2>Fun facts</h2>
+      <ul>
+        <li>The average price of the books in this collection is $<?= number_format(getAvgBookCost(), 2, '.', '') ?>.</li>
+        <li>Most recently released book(s):
+          <?php
+            $latest_releases = getLatestReleases();
+            $last_book = array_pop($latest_releases);
+            foreach ($latest_releases as $book) {
+              echo $book['title'] . ", ";
+            }
+            if (!empty($last_book)) {
+              echo $last_book['title'];
+            }
+          ?>
+        </li>
+      </ul>
+    </div>
     <table class="book_collection">
       <tr>
         <th class="header_id" onClick="reloadAndSort('id')">
