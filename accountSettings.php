@@ -1,5 +1,3 @@
-<!--  ** BM updating password update functionality now! **  -->
-
 <?php
 require '../db_connection.php';
 
