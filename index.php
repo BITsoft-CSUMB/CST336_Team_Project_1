@@ -1,7 +1,3 @@
-<!--
-  Last Updated: BM 31-Jan @ 1812
--->
-
 <?php
 /*
   Open database connection and import the new database 
@@ -89,6 +85,148 @@ function getLatestReleases() {
   return $stmt -> fetchAll();
 }
 
+/*
+  Get all categories.
+*/
+function getCategories() {
+  global $dbConn;
+  $sql = "SELECT * 
+          FROM categories;";
+  $stmt = $dbConn -> prepare($sql);
+  $stmt -> execute();
+  return $stmt -> fetchAll();
+}
+
+/*
+  Get all authors.
+*/
+function getAuthors() {
+  global $dbConn;
+  $sql = "SELECT * 
+          FROM authors;";
+  $stmt = $dbConn -> prepare($sql);
+  $stmt -> execute();
+  return $stmt -> fetchAll();
+}
+
+/*
+  Get the title from a book.
+*/
+function get_title($i) {
+  return $i['title'];
+}
+
+
+/*
+  Check for form submission for adding a book. If submitted,
+  add book and book details requested.
+*/
+$book_added = false;
+if (isset($_POST['add_book'])) {
+  global $dbConn;
+  // Insert publisher information.
+  $sql = "INSERT INTO publishers (name, address, city, state, zip) 
+          VALUES (:name, :address, :city, :state, :zip);";
+  $stmt = $dbConn -> prepare($sql);
+  $stmt -> execute(array(":name" => $_POST['publisher_name'],
+                         ":address" => $_POST['publisher_address'],
+                         ":city" => $_POST['publisher_city'], 
+                         ":state"=> $_POST['publisher_state'], 
+                         ":zip" => $_POST['publisher_zip']));
+  $publisher_id = $dbConn -> lastInsertId();
+  // Insert author.
+  $sql = "INSERT INTO authors (name) 
+          VALUES (:name);";
+  $stmt = $dbConn -> prepare($sql);
+  $stmt -> execute(array(":name" => $_POST['author']));
+  $author_id = $dbConn -> lastInsertId();
+  // Insert book.
+  $sql = "INSERT INTO books (author_id, publisher_id, title, release_date, isbn, synopsis, price) 
+          VALUES (:author_id, :publisher_id, :title, :release_date, :isbn, :synopsis, :price);";
+  $stmt = $dbConn -> prepare($sql);
+  $stmt -> execute(array(":author_id" => $author_id, 
+                         ":publisher_id" => $publisher_id, 
+                         ":title" => $_POST['title'], 
+                         ":release_date" => $_POST['release_date'], 
+                         ":isbn" => $_POST['isbn'], 
+                         ":synopsis" => $_POST['synopsis'], 
+                         ":price" => $_POST['price']));
+  $book_id = $dbConn -> lastInsertId();
+  // Add book categories.
+  foreach($_POST['categories'] as $category_id) {
+    $sql = "INSERT INTO book_categories (book_id, category_id) 
+            VALUES (:book_id, :category_id);";
+    $stmt = $dbConn -> prepare($sql);
+    $stmt -> execute(array(":book_id" => $book_id,
+                           ":category_id" => $category_id));
+  }
+  $book_added = true;
+}
+
+/*
+  Check for form submission for filtering results. If submitted,
+  filter results by category.
+*/
+$min_set = isset($_POST['filter_min_date']) && !empty($_POST['filter_min_date']);
+$max_set = isset($_POST['filter_max_date']) && !empty($_POST['filter_max_date']);
+$book_list = getBooks();
+if (isset($_POST['filter_submit']) && !empty($_POST['filter'])) {
+  $new_list = implode(", ", $_POST['filter']);
+  $sql = "SELECT books.*,
+            authors.name AS author, 
+            publishers.name AS publisher
+          FROM books
+          LEFT JOIN authors ON authors.id = books.author_id
+          LEFT JOIN publishers ON publishers.id = books.publisher_id
+          INNER JOIN book_categories ON books.id = book_categories.book_id 
+          INNER JOIN categories ON categories.id = book_categories.category_id
+          WHERE categories.id IN (" . $new_list . ");";
+  $stmt = $dbConn -> prepare($sql);
+  $stmt -> execute();
+  $book_list = $stmt -> fetchAll();
+}
+
+/*
+  Check for form submission for filtering results. If submitted,
+  filter results by author.
+*/
+elseif (isset($_POST['filter_author_submit']) && isset($_POST['filter_author'])) { 
+  $sql = "SELECT books.*,
+            authors.name AS author, 
+            publishers.name AS publisher
+          FROM books
+          LEFT JOIN authors ON authors.id = books.author_id
+          LEFT JOIN publishers ON publishers.id = books.publisher_id
+          WHERE " . $_POST['filter_author'] . " = books.author_id;";
+  $stmt = $dbConn -> prepare($sql);
+  $stmt -> execute();
+  $book_list = $stmt -> fetchAll();
+}
+
+/*
+  Check for form submission for filtering results. If submitted,
+  filter results by date.
+*/
+elseif (isset($_POST['filter_date_submit']) && ($min_set == true || $max_set == true)) {
+  $condition = "";
+  if ($min_set && $max_set) {
+    $condition = "WHERE books.release_date > '" . $_POST['filter_min_date'] . "' AND books.release_date < '" . $_POST['filter_max_date'] . "'";
+  } else if (!$min_set && $max_set) {
+    $condition = "WHERE books.release_date < '" . $_POST['filter_max_date'] . "'";
+  } else if ($min_set && !$max_set) {
+    $condition = "WHERE books.release_date > '" . $_POST['filter_min_date'] . "'";
+  }
+  
+  $sql = "SELECT books.*,
+            authors.name AS author, 
+            publishers.name AS publisher
+          FROM books
+          LEFT JOIN authors ON authors.id = books.author_id
+          LEFT JOIN publishers ON publishers.id = books.publisher_id " . $condition . ";";
+  $stmt = $dbConn -> prepare($sql);
+  $stmt -> execute();
+  $book_list = $stmt -> fetchAll();
+}
 ?>
 
 <html lang="en">
@@ -100,22 +238,22 @@ function getLatestReleases() {
   <title>Book Collection</title>
 
   <!-- Support John's goofy directory structure -->
-  <link rel="stylesheet" type="text/css" href="assign4-library.css">
-  <link rel="shortcut icon" href="../media/assign4-favicon.ico">
+  <!-- <link rel="stylesheet" type="text/css" href="library.css">
+  <link rel="shortcut icon" href="../media/favicon.ico">
   <style>
     body {
       background-image: url("../media/background-bookcase.jpg");
     } 
-  </style>
+  </style> -->
 
   <!-- Support Brittany's directory structure -->
-  <!-- <link rel="stylesheet" type="text/css" href="library.css">
+  <link rel="stylesheet" type="text/css" href="library.css">
   <link rel="shortcut icon" href="favicon.ico">
   <style>
     body {
       background-image: url("background-library.jpg");
     }
-  </style> -->
+  </style>
 
   <!-- Support Ashley's directory structure (Ashley -> Update as needed) -->
   <!-- <link rel="stylesheet" type="text/css" href="library.css">
@@ -134,24 +272,81 @@ function getLatestReleases() {
   </div>
   <div class="content">
     <h1>BITsoft Book Collection</h1>
+  	<?php 
+  	  if ($book_added == true) {
+  	?>
+  	  <div class="fun_facts"><p>Book added!</p></div>
+  	<?php 
+  	  }
+  	?>
     <div class="fun_facts">
       <h2>Fun facts</h2>
       <ul>
-        <li>The average price of the books in this collection is $<?= number_format(getAvgBookCost(), 2, '.', '') ?>.</li>
+        <li>The average price of the books in this collection is $<?php echo number_format(getAvgBookCost(), 2, '.', '') ?>.</li>
         <li>Most recently released book(s):
           <?php
-            $latest_releases = getLatestReleases();
-            $last_book = array_pop($latest_releases);
-            foreach ($latest_releases as $book) {
-              echo $book['title'] . ", ";
-            }
-            if (!empty($last_book)) {
-              echo $last_book['title'];
-            }
+            echo implode(", ", array_map("get_title", getLatestReleases()));
           ?>
         </li>
       </ul>
     </div>
+    
+    <div class ="filter">  
+      <table>
+        <form method="post">
+          <tr>
+            <th colspan=2>
+              Filter Results
+            </th>
+          </tr>
+          <tr>
+            <td>Select Category:</td>
+            <td>
+              <input type="checkbox" name='filter[]' value="1">Mystery<br />
+              <input type="checkbox" name='filter[]' value="2">Fiction<br />
+              <input type="checkbox" name='filter[]' value="3">Young Adult<br />
+              <input type="checkbox" name='filter[]' value="4">Fantasy<br />
+              <input type="checkbox" name='filter[]' value="5">Romance<br />
+              <input type="checkbox" name='filter[]' value="6">Science Fiction<br />
+              <input type="checkbox" name='filter[]' value="7">Non-Fiction<br />
+              <input type="checkbox" name='filter[]' value="8">Humor<br />
+              <input type="checkbox" name='filter[]' value="9">New Adult<br />
+              <input type="checkbox" name='filter[]' value="10">Adult<br />
+              <input type="submit" name="filter_submit" value="Filter by Categories">
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Select Date Range:
+            </td>
+            <td>
+              Min: <input type="date" name='filter_min_date'><br />
+              Max: <input type="date" name='filter_max_date'><br />
+              <input type="submit" name="filter_date_submit" value="Filter by Date">
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Select Author:
+            </td>
+            <td>
+              <select name='filter_author'>
+                <option value="-1"> - Any Author - </option>
+                <?php 
+                    $authors = getAuthors();
+                    foreach($authors as $author) {
+                      echo "<option value =" . $author[id] . ">" . $author[name] . "</option>";
+                    }
+                ?>
+              </select>
+              <input type="submit" name="filter_author_submit" value="Filter by Author">
+            </td>
+          </tr>
+          </form>
+        </table>
+    </div><br><br>
+          
+    
     <table class="book_collection">
       <tr>
         <th class="header_id" onClick="reloadAndSort('id')">
@@ -173,58 +368,90 @@ function getLatestReleases() {
       </tr>
 
       <?php
-        // Populate table with books that exist in the database.
-        $bookList = getBooks();
-        foreach ($bookList as $book) {
+        foreach ($book_list as $book) {
       ?>
         <tr>
-          <td class="book_id"><?= $book['id'] ?></td>
+          <td class="book_id"><?php echo $book['id']; ?></td>
           <td class="book_title">
-            <a href="#" onclick='showBook(<?= json_encode($book, JSON_HEX_APOS) ?>)'><?= $book['title'] ?></a>
+            <a href="#" onclick='showBook(<?php echo json_encode($book, JSON_HEX_APOS); ?>)'><?php echo $book['title']; ?></a>
           </td>
-          <td class="book_author"><?= $book['author'] ?></td>
-          <td class="book_synopsis ellipsis"><?= $book['synopsis'] ?></td>
-          <td class="book_price">$<?= $book['price'] ?></td>
-          <td><a href=".?edit="<?= $book['id']?>"">Edit</a></td>
+          <td class="book_author"><?php echo $book['author']; ?></td>
+          <td class="book_synopsis ellipsis"><?php echo $book['synopsis']; ?></td>
+          <td class="book_price">$<?php echo $book['price']; ?></td>
         </tr>
       <?php
         } // close foreach
       ?>
     </table>
 
-    <table class="add_book">
-      <tr>
-        <th colspan=2>New Book</th>
-      </tr>
-      <tr>
-        <td class="col_header">Title:</td>
-        <td><input type=text name=title size=25 maxlength=50></td>
-      </tr>
-      <tr>
-        <td class="col_header">Author:</td>
-        <td><!-- TODO: Add select input here with option of other to create new author. --></td>
-      </tr>
-      <tr>
-        <td class="col_header">Synopsis:</td>
-        <td><textarea cols=25 rows=5></textarea></td>
-      </tr>
-      <tr>
-        <td class="col_header">Release Date:</td>
-        <td><input type=text name=release_date size=25></td>
-      </tr>
-      <tr>
-        <td class="col_header">ISBN:</td>
-        <td><input type=text name=isbn size=15 maxlength=10></td>
-      </tr>
-      <tr>
-        <td class="col_header">Publisher:</td>
-        <td><!-- TODO: See author comment above. --></td>
-      </tr>
-      <tr>
-        <td class="col_header">Price:</td>
-        <td><input type=text name=price size=15 maxlength=10></td>
-      </tr>
-    </table>
+    <form method="post">
+      <table class="add_book">
+        <tr>
+          <th colspan=2>New Book</th>
+        </tr>
+        <tr>
+          <td class="col_header">Title:</td>
+          <td><input type="text" name="title" size=25 maxlength=50></td>
+        </tr>
+        <!-- If time allows, add drop-down selection for author here 
+             (instead of filling in author data). -->
+        <tr>
+          <td class="col_header">Author:</td>
+          <td><input type="text" name="author"></td>
+        </tr>
+        <tr>
+          <td class="col_header">Synopsis:</td>
+          <td><textarea name="synopsis" cols=25 rows=5></textarea></td>
+        </tr>
+        <tr>
+          <td class="col_header">Release Date:</td>
+          <td><input type="date" name="release_date" size=25></td>
+        </tr>
+        <tr>
+          <td class="col_header">ISBN:</td>
+          <td><input type="text" name="isbn" size=15 maxlength=10></td>
+        </tr>
+        <!-- If time allows, add drop-down selection for publisher here 
+             (instead of filling in publisher ). -->
+        <div class="form_publisher_section">
+          <tr>
+            <td class="col_header">Publisher Name:</td>
+            <td><input type="text" name="publisher_name"></td>
+          </tr>
+          <tr>
+            <td class="col_header">Publisher Address:</td>
+            <td><input type="text" name="publisher_address"></td>
+          </tr>
+          <tr>
+            <td class="col_header">Publisher City:</td>
+            <td><input type="text" name="publisher_city"></td>
+          </tr>
+          <tr>
+            <td class="col_header">Publisher State:</td>
+            <td><input type="text" name="publisher_state" size="2"></td>
+          </tr>
+          <tr>
+            <td class="col_header">Publisher Zip:</td>
+            <td><input type="text" name="publisher_zip" size="5"></td>
+          </tr>
+        </div>
+        <tr>
+          <td class="col_header">Price:</td>
+          <td><input type="text" name="price" size=15 maxlength=10></td>
+        </tr>
+        <tr>
+          <td class="col_header">Categories (select all that apply):<br>
+        <?php
+          foreach(getCategories() as $category) {
+        ?>
+          <input type='checkbox' name='categories[]' value='<?php echo $category['id']; ?>'><?php echo $category['name']; ?><br>
+        <?php 
+          }
+        ?>
+        </td><td></td></tr>
+        <tr><td colspan="2"><input type="submit" name="add_book" value="Add Book"></td></tr>
+      </table>
+    </form>
   </div>
 
   <div id="popup">
